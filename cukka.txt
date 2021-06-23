@@ -1,0 +1,28 @@
+client.on('roleDelete', async function(role) {
+  let guild23 = client.guilds.get(ayarlar.sunucuid)
+  const logChannel = guild23.channels.find(c => c.name === 'koruma-log') 
+  const entry = await role.guild.fetchAuditLogs({type: "ROLE_DELETE"}).then(log => log.entries.first())
+  let yapan = role.guild.member(entry.executor.id);
+  if (elijahguvenli.includes(yapan.id)) return;
+  await yapan.setRoles(['769235856187719690']);
+  let rol = role.name;
+  let renk = role.color;
+  let ayrı = role.hoist;
+  let sıra = role.position;
+  let yetkiler = role.permissions;
+  let etiketlenebilir = role.mentionable;
+  role.guild.createRole({
+    name:rol,
+    color:renk,
+    hoist:ayrı,
+    position:sıra,
+    permissions:yetkiler,
+    mentionable:etiketlenebilir
+  })
+  let uyarı = new Discord.RichEmbed()
+  .setColor(ayarlar.renk)
+  .setFooter(ayarlar.footer)
+  .setAuthor(ayarlar.author)
+  .setDescription(`${rol} adına sahip rol, ${yapan} adlı kişi tarafından silindi. Ben rolü tekradan oluşturdum ve yetkiliyi cezalıya attım.`)
+  guild23.channels.get(logChannel).send(uyarı)
+});
